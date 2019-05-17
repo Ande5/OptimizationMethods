@@ -4,26 +4,9 @@ using System.Linq;
 
 namespace Bl.Method
 {
-    public class ApproximationMethod
+    public class ApproximationMethod:Iteration
     {
         private readonly SingleVariableFunctionDelegate _f;
-
-        private IterationInfoEventArgs _iterationInfoEventArgs;
-
-        /// <summary>
-        /// Левая граница
-        /// </summary>
-        public double LeftBound => _iterationInfoEventArgs.LeftBound;
-
-        /// <summary>
-        /// Правая граница
-        /// </summary>
-        public double RightBound => _iterationInfoEventArgs.RightBound;
-
-        /// <summary>
-        /// Кол-во итераций
-        /// </summary>
-        public int Iteration => _iterationInfoEventArgs.Iteration;
 
         private double A0(double x1) => _f(x1);
 
@@ -34,14 +17,10 @@ namespace Bl.Method
 
         private static double MiddleX(double x1, double x2, double a1, double a2) => (x1 + x2) / 2 - a1 / (2 * a2);
 
-        public delegate void IterationInfoDelegate(object sender, IterationInfoEventArgs iterationInfoEventArgs);
-
         public ApproximationMethod(SingleVariableFunctionDelegate function)
         {
             _f = function;
         }
-
-        public event IterationInfoDelegate OnIteration;
 
         /// <summary>
         /// Вычисление методом квадратичной апроксимации
@@ -81,11 +60,10 @@ namespace Bl.Method
                 functionDatas.Remove(functionDatas.Max());
 
                 iteration++;
-                OnIteration?.Invoke(this, new IterationInfoEventArgs(functionDatas[0].Value, functionDatas[1].Value, iteration));
-
+                ShowIteration(functionDatas[0].Value, functionDatas[1].Value, iteration);
             } while (eps < Math.Abs((functionDatas.Min(f => f.FunctionValue) - _f(middleX)) / _f(middleX)));
 
-            _iterationInfoEventArgs = new IterationInfoEventArgs(functionDatas[0].Value, functionDatas[1].Value, iteration);
+            IterationInfoEventArgs = new IterationInfoEventArgs(functionDatas[0].Value, functionDatas[1].Value, iteration);
             return middleX;
         }
     }

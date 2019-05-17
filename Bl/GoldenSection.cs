@@ -2,19 +2,15 @@
 
 namespace Bl
 {
-    public class GoldenSection
+    public class GoldenSection:Iteration
     {
         private readonly double PHI = (1 + Math.Sqrt(5)) / 2;
         private readonly SingleVariableFunctionDelegate _function;
-
-        public delegate void IterationInfoDelegate(object sender, IterationInfoEventArgs iterationInfoEventArgs);
 
         public GoldenSection(SingleVariableFunctionDelegate function)
         {
             _function = function;
         }
-
-        public event IterationInfoDelegate OnIteration;
 
         public double FindMin(double a, double b, double e)
         {
@@ -31,7 +27,7 @@ namespace Bl
                 if (Math.Abs(b - a) < e)
                     break;
                 iteration++;
-                OnIteration?.Invoke(this, new IterationInfoEventArgs(a, b, iteration));
+                ShowIteration(a, b, iteration);
             }
             return (a + b) / 2;
         }
@@ -51,7 +47,7 @@ namespace Bl
                 if (Math.Abs(b - a) < e)
                     break;
                 iteration++;
-                OnIteration?.Invoke(this, new IterationInfoEventArgs(a, b, iteration));
+                ShowIteration(a, b, iteration);
             }
             return (a + b) / 2;
         }

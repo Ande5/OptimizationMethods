@@ -1,26 +1,8 @@
 ﻿namespace Bl.Method
 {
-    public class HalvingMethod
+    public class HalvingMethod:Iteration
     {
         private readonly SingleVariableFunctionDelegate _f;
-
-        private IterationInfoEventArgs _iterationInfoEventArgs; 
-
-        public delegate void IterationInfoDelegate(object sender, IterationInfoEventArgs iterationInfoEventArgs);
-        /// <summary>
-        /// Левая граница
-        /// </summary>
-        public double LeftBound => _iterationInfoEventArgs.LeftBound;
-
-        /// <summary>
-        /// Правая граница
-        /// </summary>
-        public double RightBound => _iterationInfoEventArgs.RightBound;
-
-        /// <summary>
-        /// Кол-во итераций
-        /// </summary>
-        public int Iteration => _iterationInfoEventArgs.Iteration;
 
         public double MiddleInterval(double leftBound, double rightBound) => (leftBound + rightBound) / 2;
 
@@ -43,9 +25,9 @@
         /// <returns>Средение значение x между границами</returns>
         public double Calculation(double leftBound, double rightBound)
         {
-            _iterationInfoEventArgs = new IterationInfoEventArgs(leftBound, rightBound, 1);
+            IterationInfoEventArgs = new IterationInfoEventArgs(leftBound, rightBound, 1);
             var middleInterval = MiddleInterval(leftBound, rightBound);
-            return RunIterations(_iterationInfoEventArgs, ref middleInterval);
+            return RunIterations(IterationInfoEventArgs, ref middleInterval);
         }
 
         /// <summary>
@@ -86,13 +68,11 @@
 
                 err = (b-a) / len;
                 iteration++;
-                OnIteration?.Invoke(this, new IterationInfoEventArgs(a, b, iteration));
+                ShowIteration(a, b, iteration);
             }
-            _iterationInfoEventArgs = new IterationInfoEventArgs(a, b, iteration);
+            IterationInfoEventArgs = new IterationInfoEventArgs(a, b, iteration);
             return middleInterval;
         }
-
-        public event IterationInfoDelegate OnIteration;
 
         /// <summary>
         /// Выполнение итераций
@@ -110,7 +90,7 @@
             {
                 iterationInfo.RightBound = middleInterval;
                 middleInterval = x1;
-                OnIteration?.Invoke(this, iterationInfo);
+                ShowIteration(iterationInfo);
                 iterationInfo.Iteration++;
                 RunIterations(iterationInfo, ref middleInterval);
             }
@@ -118,7 +98,7 @@
             {
                 iterationInfo.LeftBound = middleInterval;
                 middleInterval = x2;
-                OnIteration?.Invoke(this, iterationInfo);
+                ShowIteration(iterationInfo);
                 iterationInfo.Iteration++;
                 RunIterations(iterationInfo, ref middleInterval);
             }

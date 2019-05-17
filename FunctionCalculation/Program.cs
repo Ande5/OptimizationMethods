@@ -6,7 +6,7 @@ namespace FunctionCalculation
 {
     class Program
     {
-        private static double startPoint = 0, h = 0.5, eps = 0.01;
+        private static double startPoint = 0, h = 0.5, eps = 0.001;
 
         private static double FunctionD1(double x) => 4 * (x - 3) + 0.5 * Math.Pow(Math.E, 0.5 * x);
 
@@ -29,7 +29,7 @@ namespace FunctionCalculation
             var halvingMethod = new HalvingMethod(MinimizationFunction);
             halvingMethod.OnIteration += Print_OnIteration;
             var resultHalving = halvingMethod.Calculation(leftBound, rightBound, eps);
-            PrintBoundaries(halvingMethod.LeftBound, halvingMethod.RightBound, halvingMethod.Iteration);
+            PrintBoundaries(halvingMethod.LeftBound, halvingMethod.RightBound, halvingMethod.Iterations);
             PrintFunction(resultHalving, MinimizationFunction);
 
             Console.ReadKey();
@@ -38,7 +38,7 @@ namespace FunctionCalculation
             var approximationMethod = new ApproximationMethod(MinimizationFunction);
             approximationMethod.OnIteration += Print_OnIteration;
             var resultApproximation = approximationMethod.Calculation(leftBound, rightBound, eps);
-            PrintBoundaries(approximationMethod.LeftBound, approximationMethod.RightBound, approximationMethod.Iteration);
+            PrintBoundaries(approximationMethod.LeftBound, approximationMethod.RightBound, approximationMethod.Iterations);
             PrintFunction(resultApproximation, MinimizationFunction);
 
             Console.ReadKey();

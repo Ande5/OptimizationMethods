@@ -2,20 +2,16 @@
 
 namespace Bl.Method
 {
-    public class NewtonMethod
+    public class NewtonMethod:Iteration
     {
         private readonly SingleVariableFunctionDelegate _fd1;
         private readonly SingleVariableFunctionDelegate _fd2;
-
-        public delegate void IterationInfoDelegate(object sender, IterationInfoEventArgs iterationInfoEventArgs);
 
         public NewtonMethod(SingleVariableFunctionDelegate functionD1, SingleVariableFunctionDelegate functionD2)
         {
             _fd1 = functionD1;
             _fd2 = functionD2;
         }
-
-        public event IterationInfoDelegate OnIteration;
 
         /// <summary>
         /// Вычисление методом Ньютона
@@ -34,7 +30,7 @@ namespace Bl.Method
                 x1 = x0 - _fd1(x0) / _fd2(x0);
                 dx = Math.Abs(x1 - x0);
                 x0 = x1;
-                OnIteration?.Invoke(this, new IterationInfoEventArgs(x0, x1, iteration));
+                ShowIteration(x0, x1, iteration);
             }
             while (dx > eps);
             return x1;
