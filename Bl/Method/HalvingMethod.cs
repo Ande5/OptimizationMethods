@@ -20,7 +20,7 @@
         /// <summary>
         /// Кол-во итераций
         /// </summary>
-        public int Iteration => _iterationInfoEventArgs.Iteration-1;
+        public int Iteration => _iterationInfoEventArgs.Iteration;
 
         public double MiddleInterval(double leftBound, double rightBound) => (leftBound + rightBound) / 2;
 
@@ -48,14 +48,20 @@
             return RunIterations(_iterationInfoEventArgs, ref middleInterval);
         }
 
-
+        /// <summary>
+        /// Вычисление методом деления пополам c заданой eps
+        /// </summary>
+        /// <param name="leftBound">Значение левой границы</param>
+        /// <param name="rightBound">Значение правой границы</param>
+        /// <param name="eps">Заданая точность</param>
+        /// <returns></returns>
         public double Calculation(double leftBound, double rightBound, double eps)
         {
-            double a = leftBound, b = rightBound;
+            double a = leftBound, b = rightBound; var iteration = 0;
             var middleInterval = MiddleInterval(leftBound, rightBound);
             var len = b-a;
             var err = len;
-            var iteration = 0;
+           
             while (err >= eps)
             {
                 var dx = IntervalLength(a, b);
@@ -82,7 +88,7 @@
                 iteration++;
                 OnIteration?.Invoke(this, new IterationInfoEventArgs(a, b, iteration));
             }
-
+            _iterationInfoEventArgs = new IterationInfoEventArgs(a, b, iteration);
             return middleInterval;
         }
 

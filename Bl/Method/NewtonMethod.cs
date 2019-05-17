@@ -7,8 +7,6 @@ namespace Bl.Method
         private readonly SingleVariableFunctionDelegate _fd1;
         private readonly SingleVariableFunctionDelegate _fd2;
 
-        private IterationInfoEventArgs _iterationInfoEventArgs;
-
         public delegate void IterationInfoDelegate(object sender, IterationInfoEventArgs iterationInfoEventArgs);
 
         public NewtonMethod(SingleVariableFunctionDelegate functionD1, SingleVariableFunctionDelegate functionD2)

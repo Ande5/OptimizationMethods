@@ -61,7 +61,7 @@ namespace Bl.Method
             double middleX; 
             var x1 = functionDatas[0].Value;
             var x3 = functionDatas[1].Value;
-           // OnIteration?.Invoke(this, new IterationInfoEventArgs(leftBound, rightBound, iteration));
+
             do
             {
                  x1 = functionDatas[0].Value;
@@ -81,12 +81,11 @@ namespace Bl.Method
                 functionDatas.Remove(functionDatas.Max());
 
                 iteration++;
-              //  OnIteration?.Invoke(this, new IterationInfoEventArgs(functionDatas[0].Value, functionDatas[1].Value, iteration));
-                OnIteration?.Invoke(this, new IterationInfoEventArgs(x1, x3, iteration));
+                OnIteration?.Invoke(this, new IterationInfoEventArgs(functionDatas[0].Value, functionDatas[1].Value, iteration));
+
             } while (eps < Math.Abs((functionDatas.Min(f => f.FunctionValue) - _f(middleX)) / _f(middleX)));
 
-           // _iterationInfoEventArgs = new IterationInfoEventArgs(functionDatas[0].Value, functionDatas[1].Value, iteration);
-            _iterationInfoEventArgs = new IterationInfoEventArgs(x1, x3, iteration);
+            _iterationInfoEventArgs = new IterationInfoEventArgs(functionDatas[0].Value, functionDatas[1].Value, iteration);
             return middleX;
         }
     }
