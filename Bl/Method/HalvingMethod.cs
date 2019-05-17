@@ -4,8 +4,9 @@
     {
         private readonly SingleVariableFunctionDelegate _f;
 
-        private IterationInfoEventArgs _iterationInfoEventArgs;
+        private IterationInfoEventArgs _iterationInfoEventArgs; 
 
+        public delegate void IterationInfoDelegate(object sender, IterationInfoEventArgs iterationInfoEventArgs);
         /// <summary>
         /// Левая граница
         /// </summary>
@@ -48,6 +49,52 @@
         }
 
         /// <summary>
+        /// Вычисление методом деления пополам c заданой eps
+        /// </summary>
+        /// <param name="leftBound">Значение левой границы</param>
+        /// <param name="rightBound">Значение правой границы</param>
+        /// <param name="eps">Заданая точность</param>
+        /// <returns></returns>
+        public double Calculation(double leftBound, double rightBound, double eps)
+        {
+            double a = leftBound, b = rightBound; var iteration = 0;
+            var middleInterval = MiddleInterval(leftBound, rightBound);
+            var len = b-a;
+            var err = len;
+           
+            while (err >= eps)
+            {
+                var dx = IntervalLength(a, b);
+                var x1 = X1(a, dx);
+                var x2 = X2(b, dx);
+
+                if (_f(x1) < _f(middleInterval))
+                {
+                    b = middleInterval;
+                    middleInterval = x1;
+                }
+                else if (_f(x2) < _f(middleInterval))
+                {
+                    a = middleInterval;
+                    middleInterval = x2;
+                }
+                else if (_f(x2) >= _f(middleInterval) || _f(x1) >= _f(middleInterval))
+                {
+                    a = x1;
+                    b = x2;
+                }
+
+                err = (b-a) / len;
+                iteration++;
+                OnIteration?.Invoke(this, new IterationInfoEventArgs(a, b, iteration));
+            }
+            _iterationInfoEventArgs = new IterationInfoEventArgs(a, b, iteration);
+            return middleInterval;
+        }
+
+        public event IterationInfoDelegate OnIteration;
+
+        /// <summary>
         /// Выполнение итераций
         /// </summary>
         /// <param name="iterationInfo">Информация об итерациях</param>
@@ -58,11 +105,12 @@
             var dx = IntervalLength(iterationInfo.LeftBound, iterationInfo.RightBound);
             var x1 = X1(iterationInfo.LeftBound, dx);
             var x2 = X2(iterationInfo.RightBound, dx);
-
+           
             if (_f(x1) < _f(middleInterval))
             {
                 iterationInfo.RightBound = middleInterval;
                 middleInterval = x1;
+                OnIteration?.Invoke(this, iterationInfo);
                 iterationInfo.Iteration++;
                 RunIterations(iterationInfo, ref middleInterval);
             }
@@ -70,6 +118,7 @@
             {
                 iterationInfo.LeftBound = middleInterval;
                 middleInterval = x2;
+                OnIteration?.Invoke(this, iterationInfo);
                 iterationInfo.Iteration++;
                 RunIterations(iterationInfo, ref middleInterval);
             }
